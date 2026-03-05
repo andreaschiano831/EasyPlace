@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="SalaPro" />
+    <meta name="theme-color" content="#7C6EF5" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="description" content="App professionale per gestione sala ristorante e club" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg" />
+    <title>SalaPro</title>
+    <style>
+      *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+      html,body{height:100%;overflow:hidden;background:#0E1118}
+      #root{height:100%}
+      #splash{position:fixed;inset:0;background:#0E1118;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;z-index:9999;transition:opacity 0.3s}
+      #splash-logo{width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#7C6EF5,#4DBBDB);display:flex;align-items:center;justify-content:center;font-size:36px;box-shadow:0 8px 32px rgba(124,110,245,0.35);animation:sp-pulse 1.5s ease-in-out infinite}
+      #splash-name{color:#E8E2D6;font-family:system-ui,sans-serif;font-size:22px;font-weight:800;letter-spacing:0.04em}
+      #splash-bar{width:160px;height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden}
+      #splash-progress{height:100%;background:linear-gradient(90deg,#7C6EF5,#4DBBDB);border-radius:2px;animation:sp-load 1.4s ease-out forwards}
+      @keyframes sp-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+      @keyframes sp-load{from{width:0}to{width:100%}}
+    </style>
+  </head>
+  <body>
+    <div id="splash">
+      <div id="splash-logo">&#127925;</div>
+      <div id="splash-name">SalaPro</div>
+      <div id="splash-bar"><div id="splash-progress"></div></div>
+    </div>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
