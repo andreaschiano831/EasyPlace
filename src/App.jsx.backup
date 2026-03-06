@@ -481,7 +481,6 @@ function BarChart({data,color,height=80,t}) {
 ══════════════════════════════════════════════════════════ */
 function DashboardSection() {
   const {state,t,venue}=useApp();
-  const toast = useToast();
   const {prenotazioni,guestlist,tally_totale,tally_m,tally_f,vini,servizioOrdini}=venue;
   const upcoming=prenotazioni.filter(p=>p.stato==="upcoming").length;
   const vip=prenotazioni.filter(p=>p.tipo==="VIP").length;
@@ -489,14 +488,6 @@ function DashboardSection() {
   const checkedIn=guestlist.filter(g=>g.stato==="checkedin").length;
   const viniAlert=vini.filter(v=>v.quantita<=v.minStock);
   const totaleServizio=servizioOrdini.filter(o=>o.stato==="aperto").reduce((acc,o)=>acc+(o.totale||0),0);
-
-  const navigateTo = (section) => {
-    const url = new URL(window.location);
-    url.searchParams.set('section', section);
-    window.history.pushState({}, '', url);
-    window.dispatchEvent(new Event('popstate'));
-    toast("Navigazione a " + section, "info");
-  };
 
   return (
     <div style={{padding:"24px 20px",maxWidth:960,margin:"0 auto"}}>
@@ -506,27 +497,29 @@ function DashboardSection() {
           <p style={{color:t.inkSoft,fontSize:14}}>{new Date(state.selectedDate).toLocaleDateString("it-IT",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}</p>
         </div>
         <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-          {[["+ Prenotazione","calendar","prenotazioni"],["+ Guest","list","guestlist"],["Apri tavolo","service","servizio"],["Briefing","briefing","briefing"]].map(([label,icon,section])=>(
-            <button key={label} onClick={()=>navigateTo(section)} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 14px",borderRadius:10,border:"1px solid "+t.div,background:t.bgCard,color:t.inkSoft,fontSize:12,fontWeight:600,cursor:"pointer",transition:"all 0.2s"}} onMouseEnter={e=>{e.currentTarget.style.borderColor=t.accent;e.currentTarget.style.color=t.accent;e.currentTarget.style.background=t.accentGlow;}} onMouseLeave={e=>{e.currentTarget.style.borderColor=t.div;e.currentTarget.style.color=t.inkSoft;e.currentTarget.style.background=t.bgCard;}}>
+          {[["+ Prenotazione","calendar"],["+ Guest","list"],["Apri tavolo","service"],["Briefing","briefing"]].map(([label,icon])=>(
+            <button key={label} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 14px",borderRadius:10,border:`1px solid ${t.div}`,background:t.bgCard,color:t.inkSoft,fontSize:12,fontWeight:600,cursor:"pointer",transition:"all 0.2s"}}
+              onMouseEnter={e=>{e.currentTarget.style.borderColor=t.accent;e.currentTarget.style.color=t.accent;}}
+              onMouseLeave={e=>{e.currentTarget.style.borderColor=t.div;e.currentTarget.style.color=t.inkSoft;}}>
               <Icon name={icon} size={14} color="currentColor"/>{label}
             </button>
           ))}
         </div>
       </div>
       <div style={{display:"flex",gap:12,flexWrap:"wrap",marginBottom:24}}>
-        <StatCard label="Prenotazioni" value={prenotazioni.length} sub={upcoming+" in attesa"} color={t.accent} t={t}/>
+        <StatCard label="Prenotazioni" value={prenotazioni.length} sub={`${upcoming} in attesa`} color={t.accent} t={t}/>
         <StatCard label="VIP" value={vip} sub="questa sera" color={t.vip} t={t}/>
         <StatCard label="Seduti" value={seated} sub="ai tavoli" color={t.success} t={t}/>
-        <StatCard label="Guest List" value={guestlist.length} sub={checkedIn+" check-in"} color={t.gold} t={t}/>
-        <StatCard label="Tally" value={tally_totale} sub={tally_m+"M · "+tally_f+"F"} color={t.inkSoft} t={t}/>
+        <StatCard label="Guest List" value={guestlist.length} sub={`${checkedIn} check-in`} color={t.gold} t={t}/>
+        <StatCard label="Tally" value={tally_totale} sub={`${tally_m}M · ${tally_f}F`} color={t.inkSoft} t={t}/>
         <StatCard label="Incasso Servizio" value={fmtEur(totaleServizio)} sub="tavoli aperti" color={t.success} t={t}/>
       </div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
-        <div style={{background:t.bgCard,borderRadius:14,border:"1px solid "+t.div,overflow:"hidden"}}>
-          <div style={{padding:"14px 18px 12px",borderBottom:"1px solid "+t.div}}><span style={{fontSize:14,fontWeight:700,color:t.ink}}>Prossimi arrivi</span></div>
+        <div style={{background:t.bgCard,borderRadius:14,border:`1px solid ${t.div}`,overflow:"hidden"}}>
+          <div style={{padding:"14px 18px 12px",borderBottom:`1px solid ${t.div}`}}><span style={{fontSize:14,fontWeight:700,color:t.ink}}>Prossimi arrivi</span></div>
           {prenotazioni.filter(p=>p.stato==="upcoming").slice(0,5).map(p=>(
-            <div key={p.id} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 18px",borderBottom:"1px solid "+t.div}}>
-              <Avatar nome={p.nome+" "+p.cognome} size={32}/>
+            <div key={p.id} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 18px",borderBottom:`1px solid ${t.div}`}}>
+              <Avatar nome={`${p.nome} ${p.cognome}`} size={32}/>
               <div style={{flex:1,minWidth:0}}>
                 <div style={{fontSize:13,fontWeight:600,color:t.ink}}>{p.nome} {p.cognome}</div>
                 <div style={{fontSize:11,color:t.inkMuted}}>{p.ospiti} ospiti · {p.ora}</div>
@@ -537,7 +530,7 @@ function DashboardSection() {
         </div>
         <div style={{display:"flex",flexDirection:"column",gap:12}}>
           {viniAlert.length>0&&(
-            <div style={{background:t.bgCard,borderRadius:14,border:"1px solid "+t.danger+"44",padding:"14px 18px"}}>
+            <div style={{background:t.bgCard,borderRadius:14,border:`1px solid ${t.danger}44`,padding:"14px 18px"}}>
               <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:10}}><Icon name="alert"size={16}color={t.danger}/><span style={{fontSize:13,fontWeight:700,color:t.danger}}>Scorte vini basse</span></div>
               {viniAlert.map(v=>(
                 <div key={v.id} style={{display:"flex",justifyContent:"space-between",padding:"4px 0",fontSize:12}}>
@@ -547,12 +540,12 @@ function DashboardSection() {
               ))}
             </div>
           )}
-          <div style={{background:t.bgCard,borderRadius:14,border:"1px solid "+t.div,padding:"14px 18px"}}>
+          <div style={{background:t.bgCard,borderRadius:14,border:`1px solid ${t.div}`,padding:"14px 18px"}}>
             <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:10}}><Icon name="alert"size={16}color={t.warning}/><span style={{fontSize:13,fontWeight:700,color:t.ink}}>Allergie questa sera</span></div>
             {prenotazioni.filter(p=>p.allergie?.length>0).map(p=>(
               <div key={p.id} style={{marginBottom:8}}>
                 <div style={{fontSize:12,fontWeight:600,color:t.ink,marginBottom:3}}>{p.nome} {p.cognome}</div>
-                <div style={{display:"flex",gap:4,flexWrap:"wrap"}}>{p.allergie.map(a=><Badge key={a}color={t.warning}bg={t.warning+"22"}>{a}</Badge>)}</div>
+                <div style={{display:"flex",gap:4,flexWrap:"wrap"}}>{p.allergie.map(a=><Badge key={a}color={t.warning}bg={`${t.warning}22`}>{a}</Badge>)}</div>
               </div>
             ))}
             {prenotazioni.filter(p=>p.allergie?.length>0).length===0&&<div style={{fontSize:12,color:t.inkMuted}}>Nessuna allergia segnalata ✓</div>}
@@ -562,6 +555,7 @@ function DashboardSection() {
     </div>
   );
 }
+
 /* ══════════════════════════════════════════════════════════
    PRENOTAZIONI
 ══════════════════════════════════════════════════════════ */
